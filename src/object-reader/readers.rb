@@ -17,6 +17,7 @@ module ObjectReader
           {
             type: klass,
             persistent_id: sketchup_entity.persistent_id,
+            visible: sketchup_entity.visible?,
             deleted: false
           }
         end
