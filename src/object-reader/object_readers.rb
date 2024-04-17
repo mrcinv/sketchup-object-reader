@@ -38,5 +38,14 @@ module ObjectReader
       reader = READERS[sketchup_entity.class] || EntityReader
       reader.read_entity(sketchup_entity)
     end
+
+    # Read the Sketchup selection and return the information about the selected objects.
+    # @param [Sketchup::Selection] the selection in the Sketchup model
+    # @return [Array<Hash{Symbol=> Object}>] the array with information about the entities in the selection.
+    def self.read_selection(selection)
+      selection.collect do |entity|
+        read_entity(entity)
+      end
+    end
   end
 end

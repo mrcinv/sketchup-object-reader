@@ -2,6 +2,7 @@
 
 require 'json'
 require_relative 'constants'
+require_relative 'object_readers'
 
 module ObjectReader
   # The command that will read the selected objects and save them to a JSON file
@@ -10,8 +11,9 @@ module ObjectReader
       # Run the command and do the tasks it needs to perform. This method will read the information about
       # the objects that are selected in Sketchup and save that information into the JSON file.
       def run
-        info = read(Sketchup.active_model.selection)
-        file = json_filename(Sketchup.active_model)
+        model = Sketchup.active_model
+        info = ObjectReaders.read_selection(model.selection)
+        file = json_filename(model)
         save!(info, file)
       end
 
@@ -24,8 +26,12 @@ module ObjectReader
       end
 
       # Save the information about the objects into the given filename.
-      def save!(info, file)
-        File.write(file, JSON.pretty_generate(info))
+      # @param info [Hash, Array] an object that contains the info about the selected entities.
+      #  The object should be of the class, that can be transformed to JSON.
+      # @param filepath [String] the path where to save the JSON.
+      # @return [Integer] the number of bytes that were written to the file.
+      def save!(info, filepath)
+        File.write(filepath, JSON.pretty_generate(info))
       end
     end
   end
