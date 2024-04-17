@@ -27,5 +27,3 @@ The entry points to the plugin code are the following
 * `ObjectReader.initialize_plugin` this code is run on Sketchup startup or when the plugin is installed.
 * `ObjectReader::ReadSelectedObjects.run` the code is run, whenever the user clicks the toolbar icon or selects the
 `Save to JSON` from the `ObjectReader` menu.
-
-The folder `test` contains the tests that can be installed as a separate plugin into Sketchup.

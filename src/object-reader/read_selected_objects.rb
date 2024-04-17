@@ -2,7 +2,7 @@
 
 require 'json'
 require_relative 'constants'
-require_relative 'object_readers'
+require_relative 'readers'
 
 module ObjectReader
   # The command that will read the selected objects and save them to a JSON file
@@ -12,7 +12,7 @@ module ObjectReader
       # the objects that are selected in Sketchup and save that information into the JSON file.
       def run
         model = Sketchup.active_model
-        info = ObjectReaders.read_selection(model.selection)
+        info = Readers.read_selection(model.selection)
         if info.empty?
           UI.messagebox("No selected entities. Please select entities before saving the information", MB_OK)
           return

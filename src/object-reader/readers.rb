@@ -2,7 +2,7 @@
 
 module ObjectReader
   # This module contains the classes that can get information from different types of Sketchup objects.
-  module ObjectReaders
+  module Readers
     # The general class that can get information common to all Sketchup entities.
     class EntityReader
       class << self
@@ -23,9 +23,29 @@ module ObjectReader
       end
     end
 
+    # The class that gets the information for Sketchup group.
+    class GroupReader
+      class << self
+        # Read the information about the given entity and return it in a structured way,
+        # @param sketchup_group [Sketchup::Group] the Sketchup entity to be read
+        # @return [Hash{Symbol => Object}] the information about the given entity.
+        def read_entity(sketchup_group)
+
+          entity_info = EntityReader.read_entity(sketchup_group)
+          return entity_info if sketchup_group.deleted?
+
+          children_info = sketchup_group.entities.collect do |entity|
+            Readers.read_entity(entity)
+          end
+          entity_info[:children] = children_info
+          entity_info
+        end
+      end
+    end
+
     # A dictionary of entity readers indexed by the class of the entity.
     READERS = {
-      Sketchup::Group => EntityReader
+      Sketchup::Group => GroupReader
     }
 
     # Read the information about the given entity and return it in a structured way,
