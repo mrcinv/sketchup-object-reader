@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require_relative 'constants'
 
 module ObjectReader
   # The command that will read the selected objects and save them to a JSON file
@@ -31,9 +32,14 @@ module ObjectReader
 
   # Create tje command for reading info about selected files and saving it to the JSON file.
   # @return [UI::Command] the command object that can be added to the menu or toolbar.
-  def read_selected_object_command
-    UI::Command.new("Write selected objects to JSON") do
+  def self.read_selected_object_command
+    cmd = UI::Command.new("Write to JSON") do
       ReadSelectedObjects.run
     end
+    cmd.tooltip="Write information about selected objects to Sketchup."
+    icon_path = File.join(PLUGIN_PATH, "icons", "saveJSON.svg")
+    cmd.large_icon = icon_path
+    cmd.small_icon = icon_path
+    cmd
   end
 end
