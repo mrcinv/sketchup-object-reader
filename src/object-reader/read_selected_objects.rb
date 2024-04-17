@@ -13,14 +13,24 @@ module ObjectReader
       def run
         model = Sketchup.active_model
         info = ObjectReaders.read_selection(model.selection)
+        if info.empty?
+          UI.messagebox("No selected entities. Please select entities before saving the information", MB_OK)
+          return
+        end
         file = json_filename(model)
-        save!(info, file)
+        path = UI.openpanel("Select where to save the information about selected entities!",
+                            file && File.dirname(file), file && File.basename(file))
+        return unless path
+        save!(info, path)
+        UI.messagebox("Information was saved to #{path}", MB_OK)
       end
 
       # @param model [Sketchup::Model] the model to construct the name for.
-      # @return [String] the name of the JSON file to save the data into.
+      # @return [String, nil] the name of the JSON file to save the data into.
       def json_filename(model)
         path = model.path
+        return nil if path.empty?
+
         basename = File.basename(path, ".skp")
         File.join(File.dirname(path), "#{basename}.json")
       end
