@@ -39,6 +39,47 @@ module ObjectReader
             Readers.read_entity(entity)
           end
           entity_info[:children] = children_info
+          entity_info[:name] = sketchup_group.name
+          entity_info
+        end
+      end
+    end
+
+    # The class that gets the information for Sketchup face.
+    class FaceReader
+      class << self
+        # Read the information about the given entity and return it in a structured way,
+        # @param sketchup_face [Sketchup::Face] the Sketchup entity to be read
+        # @return [Hash{Symbol => Object}] the information about the given entity.
+        def read_entity(sketchup_face)
+
+          entity_info = EntityReader.read_entity(sketchup_face)
+          return entity_info if sketchup_face.deleted?
+
+          edges_info = sketchup_face.edges.collect do |edge|
+            edge.persistent_id
+          end
+          entity_info[:edges] = edges_info
+          entity_info
+        end
+      end
+    end
+
+    # The class that gets the information for Sketchup edge.
+    class EdgeReader
+      class << self
+        # Read the information about the given entity and return it in a structured way,
+        # @param sketchup_edge [Sketchup::Face] the Sketchup entity to be read
+        # @return [Hash{Symbol => Object}] the information about the given entity.
+        def read_entity(sketchup_edge)
+
+          entity_info = EntityReader.read_entity(sketchup_edge)
+          return entity_info if sketchup_edge.deleted?
+
+          faces_info = sketchup_edge.faces.collect do |face|
+            face.persistent_id
+          end
+          entity_info[:faces] = faces_info
           entity_info
         end
       end
@@ -46,7 +87,9 @@ module ObjectReader
 
     # A dictionary of entity readers indexed by the class of the entity.
     READERS = {
-      Sketchup::Group => GroupReader
+      Sketchup::Group => GroupReader,
+      Sketchup::Face => FaceReader,
+      Sketchup::Edge => EdgeReader
     }
 
     # Read the information about the given entity and return it in a structured way,
